@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0A0A0A">
+<title>APP FRANK1 v5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--gold:#C9A84C;--g2:#E8C96A;--pur:#7B2FD4;--p2:#A855F7;--bg:#0A0A0A;--bg2:#111;--bg3:#181818;--b:#2A2A2A;--b2:#333;--txt:#F0EDE6;--mut:#666;--dim:#3A3A3A;--ok:#2DD4BF;--err:#F87171;--a5:#FF6B35;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Rajdhani',sans-serif}
+button{font-family:'Rajdhani',sans-serif;cursor:pointer;border:none}
+input,textarea,select{font-family:'Rajdhani',sans-serif;color:var(--txt)}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}.screen.off{display:none!important}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--b);padding:10px 13px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo{font-size:16px;font-weight:700;letter-spacing:3px;color:var(--gold)}.logo span{color:var(--p2)}
+.badge{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--p2);border:1px solid var(--pur);padding:2px 5px;border-radius:2px}
+.back{background:none;color:var(--mut);font-size:22px;padding:0 8px 0 0;line-height:1}
+.htitle{flex:1;font-size:13px;font-weight:600;letter-spacing:1px}
+.hst{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--ok);margin-left:auto}
+.scroll{flex:1;overflow-y:auto;padding-bottom:90px}
+.hero{padding:18px 14px 12px;text-align:center}
+.hero h1{font-size:36px;font-weight:700;letter-spacing:5px;color:var(--gold);line-height:1}.hero h1 span{color:var(--p2)}
+.hero p{font-size:9px;color:var(--mut);letter-spacing:2px;margin-top:4px;font-family:'Share Tech Mono',monospace}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 13px}
+.card{background:var(--bg2);border:1px solid var(--b);border-radius:8px;padding:14px 11px;cursor:pointer;text-align:center;transition:border-color .15s}
+.card:active{transform:scale(.97);border-color:var(--gold)}.card.full{grid-column:1/-1}
+.card.gld{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.03)}
+.card.grn{border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.03)}
+.card.pur{border-color:rgba(123,47,212,.3);background:rgba(123,47,212,.03)}
+.card.a5c{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.05)}
+.ci{font-size:24px;margin-bottom:5px}.cn{font-size:12px;font-weight:700;letter-spacing:1px}.cs{font-size:9px;color:var(--mut);margin-top:2px;line-height:1.3}
+.statbox{margin:11px 13px 0;background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:11px 13px;display:flex;align-items:center;gap:10px}
+.sn{font-size:26px;font-weight:700;color:var(--gold)}.sl{font-size:10px;color:var(--mut);margin-top:1px}
+.notice{margin:10px 13px 0;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.3);border-radius:6px;padding:9px 12px;font-size:10px;color:var(--a5);font-family:'Share Tech Mono',monospace;line-height:1.5;display:none}
+.notice.show{display:block}
+/* BUBBLE */
+#bubble{position:fixed;bottom:22px;right:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pur),var(--gold));display:flex;align-items:center;justify-content:center;z-index:9998;cursor:pointer;box-shadow:0 4px 18px rgba(123,47,212,.5);touch-action:none;user-select:none;transition:transform .15s}
+#bubble:active{transform:scale(.9)}
+#bubble svg{width:22px;height:22px;color:#fff;pointer-events:none}
+#bubble .bcnt{position:absolute;top:-2px;right:-2px;background:var(--gold);color:#000;border-radius:50%;width:17px;height:17px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace}
+/* VIDEO */
+.vid-view{flex:1;position:relative;background:#000;overflow:hidden;min-height:0;display:flex;align-items:center;justify-content:center}
+#vidEl{width:100%;height:100%;object-fit:contain}
+.novid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none}
+.ni{font-size:36px}.nvt{font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--mut)}
+.scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);top:0;opacity:0}
+.scan.on{opacity:1;animation:sc 1.8s linear infinite}@keyframes sc{0%{top:0}100%{top:100%}}
+.fbadge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.8);border:1px solid var(--gold);padding:3px 8px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold)}
+.livebadge{position:absolute;top:8px;left:8px;background:var(--err);color:#fff;padding:3px 8px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;display:none;animation:lv .9s infinite}
+@keyframes lv{0%,100%{opacity:1}50%{opacity:.5}}
+#vCanvas,#cCanvas{display:none}
+/* CTRL */
+.vctrl{background:var(--bg2);border-top:1px solid var(--b);padding:9px 12px;flex-shrink:0}
+.brow{display:flex;gap:6px;margin-bottom:7px}
+.vb{flex:1;padding:9px 3px;font-size:10px;font-weight:700;border-radius:4px;background:var(--bg3);border:1px solid var(--b);color:var(--mut);text-align:center;transition:all .2s;white-space:nowrap}
+.vb.gld{border-color:rgba(201,168,76,.4);color:var(--gold);background:rgba(201,168,76,.04)}
+.vb.grn{border-color:rgba(45,212,191,.35);color:var(--ok);background:rgba(45,212,191,.04)}
+.vb.red{border-color:rgba(248,113,113,.3);color:var(--err)}
+.vb.pur{border-color:rgba(123,47,212,.35);color:var(--p2);background:rgba(123,47,212,.04)}
+.vb.a5{border-color:rgba(255,107,53,.4);color:var(--a5);background:rgba(255,107,53,.05)}
+.vb.act{background:var(--err);border-color:var(--err);color:#fff;animation:br .8s infinite}@keyframes br{0%,100%{opacity:1}50%{opacity:.7}}
+.crow{display:flex;gap:6px;align-items:center}
+.mic-b{width:40px;height:40px;background:var(--bg3);border:1px solid var(--b)!important;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.mic-b.on{border-color:var(--err)!important;background:rgba(248,113,113,.1)}
+.cin{flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:4px;padding:9px 10px;font-size:13px;outline:none;color:var(--txt);transition:border-color .2s}
+.cin:focus{border-color:var(--gold)}.cin::placeholder{color:var(--dim)}
+.gobtn{padding:9px 13px;background:linear-gradient(135deg,var(--gold),var(--g2));color:#000;border-radius:4px;font-weight:700;font-size:12px;letter-spacing:1px;flex-shrink:0}
+.gobtn:disabled{opacity:.25;cursor:not-allowed;background:var(--bg3);color:var(--dim);border:1px solid var(--b)}
+/* AGENTS */
+.agwrap{background:var(--bg);border-top:1px solid var(--b);padding:7px 12px 5px;flex-shrink:0}
+.aggrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+.ag{background:var(--bg2);border:1px solid var(--b);border-radius:4px;padding:6px 8px;transition:all .25s;cursor:pointer;position:relative}
+.ag:active{transform:scale(.97)}.ag.run{border-color:var(--gold);background:rgba(201,168,76,.05)}.ag.done{border-color:var(--ok);background:rgba(45,212,191,.03)}
+.agtop{display:flex;align-items:center;gap:5px;margin-bottom:1px}
+.anum{width:17px;height:17px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:7px;font-weight:700;flex-shrink:0}
+.n1{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.n2{background:rgba(123,47,212,.15);color:var(--p2);border:1px solid rgba(123,47,212,.3)}
+.n3{background:rgba(45,212,191,.12);color:var(--ok);border:1px solid rgba(45,212,191,.2)}
+.n4{background:rgba(255,215,0,.08);color:#FFD700;border:1px solid rgba(255,215,0,.25)}
+.n5{background:rgba(255,107,53,.12);color:var(--a5);border:1px solid rgba(255,107,53,.3)}
+.aname{font-size:9px;font-weight:700;letter-spacing:.5px}
+.agst{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--dim)}
+.agst.run{color:var(--gold);animation:bl .7s infinite}.agst.ok{color:var(--ok)}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+.agsp{font-size:9px;color:var(--mut);margin-top:2px;line-height:1.3;font-style:italic;min-height:11px}
+.rp-btn{position:absolute;top:4px;right:4px;background:none;color:var(--dim);font-size:10px;padding:0;line-height:1}
+.prog{padding:0 12px 6px;flex-shrink:0;background:var(--bg)}
+.pb{height:2px;background:var(--b);border-radius:2px;overflow:hidden}
+.pf{height:2px;background:linear-gradient(90deg,var(--pur),var(--gold));border-radius:2px;width:0%;transition:width .4s}
+.pl{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--mut);text-align:center;margin-top:3px}
+/* TRANSLATE */
+.trwrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:12px 13px;gap:9px;padding-bottom:90px}
+.lang-row{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.lang-sel{flex:1;background:var(--bg2);border:1px solid var(--b);border-radius:4px;padding:8px 10px;font-size:12px;outline:none;color:var(--txt)}
+.lang-sel option{background:var(--bg2);color:var(--txt)}
+.tr-src{background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;resize:none;outline:none;min-height:70px;color:var(--txt);width:100%}
+.tr-src:focus{border-color:var(--a5)}
+.tr-result{background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.25);border-radius:6px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;color:var(--txt);min-height:60px;white-space:pre-wrap}
+.vol-row{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.vol-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mut);flex-shrink:0;width:28px}
+.vsel{background:var(--bg2);border:1px solid var(--b);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--txt)}
+.vsel option{background:var(--bg2)}
+.big-tr{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,var(--a5),#FF9A6C);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(255,107,53,.5);z-index:200}
+.big-tr:active{transform:translateX(-50%) scale(.9)}
+.big-tr .bi{font-size:20px;line-height:1}.big-tr .bl{font-family:'Share Tech Mono',monospace;font-size:7px;color:#fff;letter-spacing:1px;margin-top:2px}
+/* TEXT */
+.txtbody{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:11px 13px;gap:8px}
+#pasteArea{flex:1;background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;resize:none;outline:none;min-height:80px;color:var(--txt)}
+#pasteArea:focus{border-color:var(--pur)}
+.pills{display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0}
+.pill{font-size:9px;color:var(--mut);border:1px solid var(--b);padding:3px 8px;border-radius:20px;background:none}
+.pill:active{border-color:var(--gold);color:var(--gold)}
+/* UPLOAD */
+.upbody{flex:1;overflow-y:auto;padding:13px}
+.dropzone{border:1px dashed var(--b2);border-radius:8px;padding:24px 14px;text-align:center;cursor:pointer;margin-bottom:12px}
+.dropzone:active{border-color:var(--gold)}
+.dzi{font-size:28px;margin-bottom:5px;color:var(--dim)}.dzt{font-size:11px;color:var(--mut)}
+.fitem{background:var(--bg2);border:1px solid var(--b);border-radius:4px;padding:8px 10px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.finf{flex:1;min-width:0}.fn{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fs{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mut)}
+.fdel{background:none;color:var(--dim);font-size:18px;flex-shrink:0}
+/* OUTPUT */
+.otabs{display:flex;border-bottom:1px solid var(--b);background:var(--bg2);flex-shrink:0}
+.otab{flex:1;padding:9px 4px;font-size:10px;font-weight:700;text-align:center;color:var(--mut);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none}
+.otab.on{color:var(--gold);border-bottom-color:var(--gold)}
+#outArea{flex:1;padding:11px 13px;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:1.8;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+#outArea.empty{color:var(--dim)}
+.oacts{padding:8px 11px;border-top:1px solid var(--b);display:flex;gap:5px;background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.ob{flex:1;min-width:48px;padding:9px 4px;font-size:10px;font-weight:700;background:var(--bg3);border:1px solid var(--b);color:var(--mut);border-radius:4px;text-align:center}
+.ob:active{transform:scale(.97)}.ob.g{border-color:rgba(201,168,76,.4);color:var(--gold)}.ob.p{border-color:rgba(123,47,212,.4);color:var(--p2)}.ob.o{border-color:rgba(255,107,53,.4);color:var(--a5)}.ob.r{border-color:rgba(248,113,113,.3);color:var(--err)}
+/* GUIDE */
+.guide{background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:13px;margin:10px 13px;font-size:11px;line-height:1.7}
+.guide h3{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:8px}
+.guide ol{padding-left:16px}.guide li{margin-bottom:5px}
+.guide code{background:var(--bg3);border:1px solid var(--b2);border-radius:3px;padding:2px 6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--g2)}
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:flex;flex-direction:column;justify-content:flex-end}
+.mbg.off{display:none}
+.modal{background:var(--bg2);border-top:1px solid var(--b2);border-radius:14px 14px 0 0;padding:14px 13px;max-height:75vh;display:flex;flex-direction:column;gap:9px}
+.mhdr{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.mclose{margin-left:auto;background:none;color:var(--mut);font-size:24px;line-height:1}
+.mname{font-size:14px;font-weight:700;letter-spacing:1px}.mpct{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mut)}
+.chatlog{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;min-height:80px}
+.bmsg{padding:8px 10px;border-radius:7px;font-size:11px;line-height:1.6;max-width:88%}
+.bmsg.ag{background:var(--bg3);border:1px solid var(--b);align-self:flex-start}
+.bmsg.usr{background:rgba(123,47,212,.15);border:1px solid rgba(123,47,212,.3);align-self:flex-end}
+.chat-in-row{display:flex;gap:6px;flex-shrink:0}
+#agIn{flex:1;background:var(--bg3);border:1px solid var(--b);border-radius:4px;padding:8px 10px;font-size:12px;outline:none;color:var(--txt)}
+.csend{padding:8px 12px;background:var(--gold);color:#000;border-radius:4px;font-weight:700;font-size:11px;flex-shrink:0}
+.cmic{width:36px;height:36px;background:var(--bg3);border:1px solid var(--b)!important;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cmic.on{border-color:var(--err)!important;background:rgba(248,113,113,.1)}
+.memsec{border-top:1px solid var(--b);padding-top:9px;flex-shrink:0}
+.mlbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--mut);letter-spacing:1px;margin-bottom:4px}
+#memTxt{width:100%;background:var(--bg3);border:1px solid var(--b);border-radius:4px;padding:7px 9px;font-size:11px;outline:none;color:var(--txt);resize:none;font-family:'Rajdhani',sans-serif;line-height:1.5;margin-bottom:5px}
+.msave{width:100%;padding:8px;background:var(--pur);color:#fff;border-radius:4px;font-weight:700;font-size:11px;letter-spacing:1px}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--b2);padding:7px 14px;border-radius:20px;font-size:10px;font-family:'Share Tech Mono',monospace;z-index:9999;opacity:0;pointer-events:none;white-space:nowrap;transition:opacity .25s;max-width:92%;text-align:center}
+#toast.show{opacity:1}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- BUBBLE -->
+<div id="bubble">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+  <div class="bcnt" id="bcnt">0</div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="s-home">
+  <div class="hdr"><div class="logo">APP <span>FRANK</span>1</div><div class="badge">v5</div><span class="hst">● ACTIVO</span></div>
+  <div class="scroll">
+    <div class="hero"><h1>FRANK<span>1</span></h1><p>EXTRACCIÓN · TRADUCCIÓN · 5 AGENTES</p></div>
+    <div class="notice" id="notice">⚠ CÁMARA/MIC REQUIEREN HTTPS · Ve a GUÍA GITHUB</div>
+    <div class="grid">
+      <div class="card gld" onclick="nav('s-video')"><div class="ci">🎬</div><div class="cn">VIDEO</div><div class="cs">XRecorder · extrae · traduce</div></div>
+      <div class="card grn" onclick="nav('s-cam')"><div class="ci">📷</div><div class="cn">CÁMARA VIVO</div><div class="cs">Apunta a pantalla · extrae texto</div></div>
+      <div class="card" onclick="nav('s-upload')"><div class="ci">📁</div><div class="cn">ARCHIVO</div><div class="cs">PDF · TXT · DOCX</div></div>
+      <div class="card" onclick="nav('s-text')"><div class="ci">📋</div><div class="cn">TEXTO</div><div class="cs">Pega chat o documento</div></div>
+      <div class="card a5c full" onclick="nav('s-translate')"><div class="ci">🌐</div><div class="cn">A5 — INTÉRPRETE</div><div class="cs">390% · EN/PT/FR/DE → ES · Voz en tiempo real</div></div>
+      <div class="card" onclick="nav('s-output')"><div class="ci">📄</div><div class="cn">RESULTADOS</div><div class="cs">Ver · Word · PDF · TXT</div></div>
+      <div class="card pur full" onclick="nav('s-guide')"><div class="ci">🔧</div><div class="cn">GUÍA GITHUB — ACTIVAR CÁMARA</div><div class="cs">HTTPS gratuito en 5 minutos</div></div>
+    </div>
+    <div class="statbox">
+      <div><div class="sn" id="hcnt">0</div><div class="sl">extracciones y traducciones</div></div>
+      <div style="margin-left:auto"><button onclick="testVoice()" style="background:var(--bg3);border:1px solid var(--b);border-radius:4px;padding:8px 10px;color:var(--mut);font-size:10px;font-weight:700;font-family:'Rajdhani',sans-serif">🔊 TEST</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO -->
+<div class="screen off" id="s-video">
+  <div class="hdr"><button class="back" onclick="nav('s-home')">←</button><div class="htitle">VIDEO / PANTALLA</div><span class="hst" id="vst">LISTO</span></div>
+  <div class="vid-view">
+    <div class="novid" id="novid"><div class="ni">🎬</div><p class="nvt">Toca CARGAR VIDEO</p></div>
+    <video id="vidEl" playsinline webkit-playsinline style="display:none" controls preload="metadata"></video>
+    <canvas id="vCanvas"></canvas>
+    <div class="scan" id="scan"></div>
+    <div class="fbadge" id="fbadge">0 frames</div>
+  </div>
+  <div class="vctrl">
+    <!-- FILA 1: pantalla, cargar video, borrar frames -->
+    <div class="brow">
+      <button class="vb pur" onclick="doScreenShare()">🖥️ PANTALLA</button>
+      <button class="vb gld" onclick="pickVideo()">📁 CARGAR</button>
+      <button class="vb red" onclick="clearFrames()">🗑 FRAMES</button>
+    </div>
+    <!-- FILA 2: TRADUCIR VIDEO | TRADUCIR + VOZ -->
+    <div class="brow">
+      <button class="vb a5" onclick="runVideoTranslate('es')">🌐 TRADUCIR VIDEO → ES</button>
+      <button class="vb grn" onclick="runVideoTranslate('voz')">🔊 TRADUCIR + VOZ</button>
+    </div>
+    <!-- FILA 3: cmd + analizar -->
+    <div class="crow">
+      <button class="mic-b" id="micV" onclick="doMic('vidCmd','micV',checkVR)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button>
+      <input class="cin" id="vidCmd" placeholder="¿Qué extraer? Escribe y toca ANALIZAR" oninput="checkVR()">
+      <button class="gobtn" id="btnAn" onclick="runVideoFull()" disabled>ANALIZAR</button>
+    </div>
+  </div>
+  <div class="agwrap">
+    <div class="aggrid">
+      <div class="ag" id="vag1" onclick="openModal(1)"><div class="agtop"><div class="anum n1">A1</div><div class="aname" style="color:var(--gold)">CIRUJANO</div></div><div class="agst" id="vast1">STANDBY</div><div class="agsp" id="vsp1"></div><button class="rp-btn" onclick="rp(1,event)">🔊</button></div>
+      <div class="ag" id="vag2" onclick="openModal(2)"><div class="agtop"><div class="anum n2">A2</div><div class="aname" style="color:var(--p2)">AUDITOR</div></div><div class="agst" id="vast2">STANDBY</div><div class="agsp" id="vsp2"></div><button class="rp-btn" onclick="rp(2,event)">🔊</button></div>
+      <div class="ag" id="vag3" onclick="openModal(3)"><div class="agtop"><div class="anum n3">A3</div><div class="aname" style="color:var(--ok)">ARQUITECTO</div></div><div class="agst" id="vast3">STANDBY</div><div class="agsp" id="vsp3"></div><button class="rp-btn" onclick="rp(3,event)">🔊</button></div>
+      <div class="ag" id="vag4" onclick="openModal(4)"><div class="agtop"><div class="anum n4">A4</div><div class="aname" style="color:#FFD700">DIOS</div></div><div class="agst" id="vast4">STANDBY</div><div class="agsp" id="vsp4"></div><button class="rp-btn" onclick="rp(4,event)">🔊</button></div>
+    </div>
+  </div>
+  <div class="prog"><div class="pb"><div class="pf" id="pvf"></div></div><div class="pl" id="pvl">— EN REPOSO —</div></div>
+  <input type="file" id="vidIn" accept="video/*,video/mp4,video/quicktime,video/x-matroska,video/webm" style="display:none" onchange="loadVid(event)">
+</div>
+
+<!-- CAM -->
+<div class="screen off" id="s-cam">
+  <div class="hdr"><button class="back" onclick="stopCam();nav('s-home')">←</button><div class="htitle">CÁMARA EN VIVO</div><span class="hst" id="camSt">INACTIVA</span></div>
+  <div class="vid-view">
+    <div class="novid" id="nocam"><div class="ni">📷</div><p class="nvt">Toca INICIAR CÁMARA</p></div>
+    <video id="camEl" playsinline autoplay muted style="display:none;width:100%;height:100%;object-fit:cover"></video>
+    <canvas id="cCanvas"></canvas>
+    <div class="scan" id="scanC"></div>
+    <div class="fbadge" id="camBadge">0 frames</div>
+    <div class="livebadge" id="liveBadge">● EN VIVO</div>
+  </div>
+  <div class="vctrl">
+    <div class="brow">
+      <button class="vb grn" id="btnCam" onclick="toggleCam()">📷 INICIAR</button>
+      <button class="vb gld" onclick="flipCam()">🔄 VOLTEAR</button>
+      <button class="vb red" onclick="clearCamFrames()">🗑 FRAMES</button>
+    </div>
+    <div class="crow">
+      <button class="mic-b" id="micC" onclick="doMic('camCmd','micC',checkCR)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button>
+      <input class="cin" id="camCmd" placeholder="¿Qué extraer de la pantalla?" oninput="checkCR()">
+      <button class="gobtn" id="btnCamAn" onclick="runCamExtract()" disabled>EXTRAER</button>
+    </div>
+  </div>
+  <div class="agwrap">
+    <div class="aggrid">
+      <div class="ag" id="cag1" onclick="openModal(1)"><div class="agtop"><div class="anum n1">A1</div><div class="aname" style="color:var(--gold)">CIRUJANO</div></div><div class="agst" id="cast1">STANDBY</div><div class="agsp" id="csp1"></div></div>
+      <div class="ag" id="cag2" onclick="openModal(2)"><div class="agtop"><div class="anum n2">A2</div><div class="aname" style="color:var(--p2)">AUDITOR</div></div><div class="agst" id="cast2">STANDBY</div><div class="agsp" id="csp2"></div></div>
+      <div class="ag" id="cag3" onclick="openModal(3)"><div class="agtop"><div class="anum n3">A3</div><div class="aname" style="color:var(--ok)">ARQUITECTO</div></div><div class="agst" id="cast3">STANDBY</div><div class="agsp" id="csp3"></div></div>
+      <div class="ag" id="cag4" onclick="openModal(4)"><div class="agtop"><div class="anum n4">A4</div><div class="aname" style="color:#FFD700">DIOS</div></div><div class="agst" id="cast4">STANDBY</div><div class="agsp" id="csp4"></div></div>
+    </div>
+  </div>
+  <div class="prog"><div class="pb"><div class="pf" id="pcf"></div></div><div class="pl" id="pcl">—</div></div>
+</div>
+
+<!-- TRANSLATOR -->
+<div class="screen off" id="s-translate">
+  <div class="hdr"><button class="back" onclick="nav('s-home')">←</button><div class="htitle">A5 — INTÉRPRETE</div><span class="hst" style="color:var(--a5)">390%</span></div>
+  <div class="trwrap">
+    <div class="lang-row">
+      <select class="lang-sel" id="fromLang"><option value="auto">🔍 AUTO</option><option value="en">🇺🇸 INGLÉS</option><option value="pt">🇧🇷 PORTUGUÉS</option><option value="fr">🇫🇷 FRANCÉS</option><option value="de">🇩🇪 ALEMÁN</option><option value="it">🇮🇹 ITALIANO</option><option value="zh">🇨🇳 CHINO</option><option value="ja">🇯🇵 JAPONÉS</option><option value="ko">🇰🇷 COREANO</option><option value="ar">🇸🇦 ÁRABE</option><option value="ru">🇷🇺 RUSO</option></select>
+      <span style="color:var(--a5);font-size:18px;flex-shrink:0">→</span>
+      <select class="lang-sel" id="toLang"><option value="es">🇲🇽 ESPAÑOL</option><option value="en">🇺🇸 INGLÉS</option><option value="pt">🇧🇷 PORTUGUÉS</option><option value="fr">🇫🇷 FRANCÉS</option><option value="de">🇩🇪 ALEMÁN</option><option value="it">🇮🇹 ITALIANO</option></select>
+    </div>
+    <div class="vol-row">
+      <span class="vol-lbl">VOL</span>
+      <input type="range" id="volSl" min="0" max="1" step="0.1" value="0.8" style="flex:1;accent-color:var(--a5)">
+      <select class="vsel" id="voiceGender"><option value="f">VOZ FEM</option><option value="m">VOZ MAS</option></select>
+      <select class="vsel" id="voiceTone"><option value="natural">NATURAL</option><option value="urgente">URGENTE</option><option value="formal">FORMAL</option><option value="dramatico">DRAMÁTICO</option></select>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <button class="mic-b" id="micTr" onclick="doMic('trSrc','micTr',null)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button>
+      <button class="vb grn" style="flex:1;padding:10px" id="btnLive" onclick="toggleLive()">🎙 LIVE TRADUCIR</button>
+      <button class="mic-b" onclick="speakTr()" title="Repetir voz"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+    </div>
+    <textarea class="tr-src" id="trSrc" rows="4" placeholder="Pega texto aquí, usa mic, o toca TRADUCIR VIDEO desde la pantalla de video..."></textarea>
+    <div class="tr-result" id="trResult">La traducción aparecerá aquí con voz automática...</div>
+    <div style="display:flex;gap:7px;flex-shrink:0">
+      <button class="gobtn" style="flex:1" onclick="runTranslate()">TRADUCIR</button>
+      <button class="ob o" style="flex:0;padding:9px 12px;border-radius:4px;background:none" onclick="saveTr()">GUARDAR</button>
+    </div>
+    <div class="ag" style="border-color:rgba(255,107,53,.3);background:rgba(255,107,53,.04);flex-shrink:0">
+      <div class="agtop"><div class="anum n5">A5</div><div class="aname" style="color:var(--a5)">INTÉRPRETE</div><button class="rp-btn" onclick="rp(5,event)" style="right:8px">🔊</button></div>
+      <div class="agst" id="tr5st">STANDBY</div><div class="agsp" id="tr5sp"></div>
+    </div>
+  </div>
+  <button class="big-tr" onclick="runTranslate()"><div class="bi">🌐</div><div class="bl">TRADUCIR</div></button>
+</div>
+
+<!-- UPLOAD -->
+<div class="screen off" id="s-upload">
+  <div class="hdr"><button class="back" onclick="nav('s-home')">←</button><div class="htitle">SUBIR ARCHIVO</div></div>
+  <div class="upbody">
+    <div class="dropzone" onclick="document.getElementById('fileIn').click()"><div class="dzi">+</div><div class="dzt">Toca para subir · TXT · PDF · DOCX</div></div>
+    <input type="file" id="fileIn" accept=".txt,.pdf,.docx,.doc" multiple style="display:none" onchange="addFiles(event)">
+    <div id="flist"></div>
+    <div style="margin-top:10px">
+      <div style="font-size:9px;color:var(--mut);margin-bottom:5px;font-family:'Share Tech Mono',monospace;letter-spacing:1px">INSTRUCCIÓN</div>
+      <div class="crow" style="margin-bottom:9px">
+        <button class="mic-b" id="micUp" onclick="doMic('upCmd','micUp',checkUR)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button>
+        <input class="cin" id="upCmd" placeholder="¿Qué extraer?" oninput="checkUR()">
+        <button class="gobtn" id="btnUp" onclick="runUpload()" disabled>IR</button>
+      </div>
+    </div>
+    <div id="uagents" style="display:none">
+      <div class="aggrid">
+        <div class="ag" id="uag1" onclick="openModal(1)"><div class="agtop"><div class="anum n1">A1</div><div class="aname" style="color:var(--gold)">CIRUJANO</div></div><div class="agst" id="uast1">STANDBY</div><div class="agsp" id="usp1"></div></div>
+        <div class="ag" id="uag2" onclick="openModal(2)"><div class="agtop"><div class="anum n2">A2</div><div class="aname" style="color:var(--p2)">AUDITOR</div></div><div class="agst" id="uast2">STANDBY</div><div class="agsp" id="usp2"></div></div>
+        <div class="ag" id="uag3" onclick="openModal(3)"><div class="agtop"><div class="anum n3">A3</div><div class="aname" style="color:var(--ok)">ARQUITECTO</div></div><div class="agst" id="uast3">STANDBY</div><div class="agsp" id="usp3"></div></div>
+        <div class="ag" id="uag4" onclick="openModal(4)"><div class="agtop"><div class="anum n4">A4</div><div class="aname" style="color:#FFD700">DIOS</div></div><div class="agst" id="uast4">STANDBY</div><div class="agsp" id="usp4"></div></div>
+      </div>
+      <div class="prog" style="padding:5px 0 0"><div class="pb"><div class="pf" id="puf"></div></div><div class="pl" id="pul">—</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEXT -->
+<div class="screen off" id="s-text">
+  <div class="hdr"><button class="back" onclick="nav('s-home')">←</button><div class="htitle">PEGAR TEXTO</div></div>
+  <div class="txtbody">
+    <textarea id="pasteArea" placeholder="Pega el chat, documento o texto fuente aquí..." oninput="checkTR()"></textarea>
+    <div class="pills">
+      <button class="pill" onclick="sp('txtCmd','Extrae todas las frases de venta')">frases venta</button>
+      <button class="pill" onclick="sp('txtCmd','Extrae todos los precios')">precios</button>
+      <button class="pill" onclick="sp('txtCmd','Extrae código de todas las tablas')">código tablas</button>
+      <button class="pill" onclick="sp('txtCmd','Extrae todo sobre APP FRANK1')">FRANK1</button>
+      <button class="pill" onclick="sp('txtCmd','Extrae instrucciones paso a paso')">instrucciones</button>
+    </div>
+    <div class="crow">
+      <button class="mic-b" id="micTxt" onclick="doMic('txtCmd','micTxt',checkTR)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button>
+      <input class="cin" id="txtCmd" placeholder="¿Qué extraer?" oninput="checkTR()">
+      <button class="gobtn" id="btnTxt" onclick="runText()" disabled>EXTRAER</button>
+    </div>
+    <div id="tagents" style="display:none">
+      <div class="aggrid">
+        <div class="ag" id="tag1" onclick="openModal(1)"><div class="agtop"><div class="anum n1">A1</div><div class="aname" style="color:var(--gold)">CIRUJANO</div></div><div class="agst" id="tast1">STANDBY</div><div class="agsp" id="tsp1"></div></div>
+        <div class="ag" id="tag2" onclick="openModal(2)"><div class="agtop"><div class="anum n2">A2</div><div class="aname" style="color:var(--p2)">AUDITOR</div></div><div class="agst" id="tast2">STANDBY</div><div class="agsp" id="tsp2"></div></div>
+        <div class="ag" id="tag3" onclick="openModal(3)"><div class="agtop"><div class="anum n3">A3</div><div class="aname" style="color:var(--ok)">ARQUITECTO</div></div><div class="agst" id="tast3">STANDBY</div><div class="agsp" id="tsp3"></div></div>
+        <div class="ag" id="tag4" onclick="openModal(4)"><div class="agtop"><div class="anum n4">A4</div><div class="aname" style="color:#FFD700">DIOS</div></div><div class="agst" id="tast4">STANDBY</div><div class="agsp" id="tsp4"></div></div>
+      </div>
+      <div class="prog" style="padding:5px 0 0"><div class="pb"><div class="pf" id="ptf"></div></div><div class="pl" id="ptl">—</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- OUTPUT -->
+<div class="screen off" id="s-output">
+  <div class="hdr"><button class="back" onclick="nav('s-home')">←</button><div class="htitle">RESULTADOS</div><span class="hst" id="ocnt" style="color:var(--gold)">0</span></div>
+  <div class="otabs">
+    <button class="otab on" onclick="switchOut('all',this)">TODOS</button>
+    <button class="otab" onclick="switchOut('last',this)">ÚLTIMO</button>
+    <button class="otab" onclick="switchOut('tr',this)">TRADUCCIONES</button>
+  </div>
+  <div id="outArea" class="empty">Las extracciones y traducciones aparecerán aquí...</div>
+  <div class="oacts">
+    <button class="ob g" onclick="copyOut()">COPIAR</button>
+    <button class="ob p" onclick="dlWord()">↓ WORD</button>
+    <button class="ob o" onclick="dlPdf()">↓ PDF</button>
+    <button class="ob" onclick="dlTxt()">↓ TXT</button>
+    <button class="ob r" onclick="clearOut()">BORRAR</button>
+  </div>
+</div>
+
+<!-- GUIDE -->
+<div class="screen off" id="s-guide">
+  <div class="hdr"><button class="back" onclick="nav('s-home')">←</button><div class="htitle">GUÍA GITHUB PAGES</div></div>
+  <div class="scroll">
+    <div class="guide"><h3>PASO 1 — CUENTA GITHUB</h3><ol><li>Ve a <code>github.com</code></li><li>Toca <code>Sign up</code> · gratis</li><li>Confirma el email</li></ol></div>
+    <div class="guide"><h3>PASO 2 — SUBIR ARCHIVO</h3><ol><li>Toca <code>+</code> → <code>New repository</code></li><li>Nombre: <code>frank1</code> · marca <code>Public</code></li><li>Toca <code>Create repository</code></li><li>Toca <code>uploading an existing file</code></li><li>Sube este archivo renombrado a <code>index.html</code></li><li>Toca <code>Commit changes</code></li></ol></div>
+    <div class="guide"><h3>PASO 3 — ACTIVAR PAGES</h3><ol><li>Ve a <code>Settings</code> del repo</li><li>Menú: <code>Pages</code></li><li>Source: <code>Deploy from a branch</code></li><li>Branch: <code>main</code> / root → <code>Save</code></li><li>Espera 2 minutos</li><li>URL: <code>tuusuario.github.io/frank1</code></li></ol></div>
+    <div class="guide"><h3>LISTO</h3><ol><li>Abre esa URL en Chrome Android</li><li>Cámara y micrófono funcionan</li><li>Menú Chrome → <strong>Añadir a pantalla de inicio</strong></li></ol></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="mbg off" id="modal">
+  <div class="modal">
+    <div class="mhdr">
+      <div class="anum" id="mnum" style="width:24px;height:24px;font-size:9px"></div>
+      <div><div class="mname" id="mname"></div><div class="mpct" id="mpct"></div></div>
+      <button class="mic-b cmic" id="modalMic" onclick="doMic('agIn','modalMic',null)" style="margin-left:auto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button>
+      <button class="mclose" onclick="closeModal()">×</button>
+    </div>
+    <div class="chatlog" id="chatlog"></div>
+    <div class="chat-in-row"><input type="text" id="agIn" placeholder="Escribe o usa el mic..."><button class="csend" onclick="sendAgent()">ENVIAR</button></div>
+    <div class="memsec">
+      <div class="mlbl">MEMORIA PERMANENTE</div>
+      <textarea id="memTxt" rows="2" placeholder="Instrucciones permanentes..."></textarea>
+      <button class="msave" onclick="saveMem()">GUARDAR MEMORIA</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── TTS SAFE ──────────────────────────────────────────────────
+const TTS = (typeof speechSynthesis !== 'undefined') ? speechSynthesis : null;
+let VOICES = [];
+function loadVoices(){ if(TTS) VOICES = TTS.getVoices(); }
+if(TTS){
+  loadVoices();
+  try{ if('onvoiceschanged' in TTS) TTS.onvoiceschanged = loadVoices; }catch(e){}
+  setTimeout(loadVoices,600); setTimeout(loadVoices,1800);
+}
+function getVoice(g){
+  const es=VOICES.filter(v=>v.lang&&v.lang.startsWith('es'));
+  if(!es.length) return VOICES[0]||null;
+  if(g==='f'){const f=es.find(v=>/female|mujer|femenin|paulina|monica|lucia|rosa/i.test(v.name));if(f)return f;}
+  return es.find(v=>/male|hombre|juan|diego|carlos/i.test(v.name))||es[0];
+}
+function speak(text,n,vol){
+  if(!TTS||!text)return;
+  try{
+    TTS.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    const rates={1:1.05,2:0.95,3:1.0,4:0.88,5:1.0};
+    const pitches={1:0.9,2:1.0,3:1.1,4:0.75,5:1.05};
+    u.rate=rates[n]||1; u.pitch=pitches[n]||1;
+    u.volume=(vol!==undefined)?vol:parseFloat(document.getElementById('volSl')?.value||'0.8');
+    u.lang='es-ES';
+    const v=getVoice(document.getElementById('voiceGender')?.value||'f');
+    if(v)u.voice=v;
+    TTS.speak(u);
+  }catch(e){ console.warn('TTS:',e); }
+}
+
+// ── STATE ─────────────────────────────────────────────────────
+const S={
+  ext:JSON.parse(localStorage.getItem('f1e')||'[]'),
+  tr:JSON.parse(localStorage.getItem('f1t')||'[]'),
+  mem:JSON.parse(localStorage.getItem('f1m')||'{"1":"","2":"","3":"","4":"","5":""}'),
+  chats:JSON.parse(localStorage.getItem('f1c')||'{"1":[],"2":[],"3":[],"4":[],"5":[]}'),
+  lastSp:{1:'',2:'',3:'',4:'',5:''},
+  frames:[],camFrames:[],capturing:false,capIv:null,lastHash:'',
+  camStream:null,camFacing:'environment',
+  files:[],mic:{},modal:null,outMode:'all',liveActive:false,liveRec:null
+};
+const AG={
+  1:{name:'CIRUJANO',color:'var(--gold)',pct:'120%',cls:'n1',p:'Eres El Cirujano. Extracción quirúrgica. Breve, directo. Máximo 2 oraciones en español.'},
+  2:{name:'AUDITOR',color:'var(--p2)',pct:'150%',cls:'n2',p:'Eres El Auditor. Verificación forense. Analítico. Máximo 2 oraciones en español.'},
+  3:{name:'ARQUITECTO',color:'var(--ok)',pct:'190%',cls:'n3',p:'Eres El Arquitecto. Visión sistémica. Estratégico. Máximo 2 oraciones en español.'},
+  4:{name:'EL DIOS',color:'#FFD700',pct:'300%',cls:'n4',p:'Eres El Dios. Sala limpia. 1 oración máximo en español.'},
+  5:{name:'INTÉRPRETE',color:'var(--a5)',pct:'390%',cls:'n5',p:'Eres El Intérprete. Experto en dramaturgia, acentuación, pronunciación, locución, tonalidades, oratoria y traducción de alto nivel. Traduces con naturalidad y elegancia. Máximo 2 oraciones en español.'}
+};
+const LN={en:'inglés',pt:'portugués',fr:'francés',de:'alemán',it:'italiano',zh:'chino',ja:'japonés',ko:'coreano',ar:'árabe',ru:'ruso',es:'español',auto:'origen'};
+
+// ── BUBBLE ────────────────────────────────────────────────────
+const bub=document.getElementById('bubble');
+let bd=false,bsx=0,bsy=0,bbx=0,bby=0;
+bub.addEventListener('pointerdown',e=>{bd=false;bsx=e.clientX;bsy=e.clientY;bbx=e.clientX-bub.getBoundingClientRect().left;bby=e.clientY-bub.getBoundingClientRect().top;bub.setPointerCapture(e.pointerId);});
+bub.addEventListener('pointermove',e=>{if(Math.abs(e.clientX-bsx)>5||Math.abs(e.clientY-bsy)>5)bd=true;if(!bd)return;bub.style.left=Math.max(0,Math.min(window.innerWidth-58,e.clientX-bbx))+'px';bub.style.top=Math.max(0,Math.min(window.innerHeight-58,e.clientY-bby))+'px';bub.style.right='auto';bub.style.bottom='auto';});
+bub.addEventListener('pointerup',()=>{if(!bd)nav('s-home');});
+
+// ── NAV / UI ──────────────────────────────────────────────────
+function nav(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('off'));document.getElementById(id).classList.remove('off');if(id==='s-output')renderOut(S.outMode);syncUI();}
+function syncUI(){
+  const total=S.ext.length+S.tr.length;
+  ['hcnt','ocnt'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=total;});
+  const bc=document.getElementById('bcnt');
+  if(total>0){bc.style.display='flex';bc.textContent=total>9?'9+':total;}else bc.style.display='none';
+  if(location.protocol!=='https:')document.getElementById('notice').classList.add('show');
+}
+function toast(msg,d=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+function rp(n,e){e&&e.stopPropagation();if(S.lastSp[n])speak(S.lastSp[n],n);else toast('Agente sin mensaje aún');}
+function testVoice(){loadVoices();const m=['Cirujano listo.','Auditoría completa.','Estructura optimizada.','Ejecutado.','Traducción perfecta.'];let i=0;(function nx(){if(i>=5)return;speak(m[i],i+1);i++;setTimeout(nx,2000);})();toast('🔊 Probando 5 voces...');}
+
+// ── MIC ───────────────────────────────────────────────────────
+function doMic(inp,btn,cb){
+  if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('Voz requiere HTTPS · Sigue la Guía GitHub');return;}
+  if(S.mic[btn]){S.SR&&S.SR.stop();S.mic[btn]=false;document.getElementById(btn).classList.remove('on');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  S.SR=new SR();S.SR.lang='es-ES';S.SR.continuous=false;S.SR.interimResults=false;
+  S.SR.onresult=e=>{document.getElementById(inp).value=e.results[0][0].transcript;S.mic[btn]=false;document.getElementById(btn).classList.remove('on');if(cb)cb();toast('✓ Voz recibida');};
+  S.SR.onerror=()=>{S.mic[btn]=false;document.getElementById(btn).classList.remove('on');};
+  S.SR.start();S.mic[btn]=true;document.getElementById(btn).classList.add('on');
+}
+function sp(id,val){document.getElementById(id).value=val;checkTR();}
+
+// ── READY CHECKS ─────────────────────────────────────────────
+function checkVR(){document.getElementById('btnAn').disabled=!document.getElementById('vidCmd').value.trim();}
+function checkCR(){document.getElementById('btnCamAn').disabled=!document.getElementById('camCmd').value.trim();}
+function checkUR(){document.getElementById('btnUp').disabled=!(S.files.length&&document.getElementById('upCmd').value.trim());}
+function checkTR(){document.getElementById('btnTxt').disabled=!(document.getElementById('pasteArea').value.trim()&&document.getElementById('txtCmd').value.trim());}
+
+// ── VIDEO LOAD — v1 method (direct createObjectURL, no FileReader) ──
+function pickVideo(){ document.getElementById('vidIn').click(); }
+function loadVid(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  // REVERT TO V1: simple createObjectURL — this is what worked originally
+  const url = URL.createObjectURL(file);
+  const vid = document.getElementById('vidEl');
+  document.getElementById('novid').style.display = 'none';
+  vid.style.display = 'block';
+  vid.src = url;
+  // Don't call vid.load() — let the browser handle it naturally
+  vid.onloadedmetadata = () => {
+    document.getElementById('vst').textContent = file.name.substring(0,16)+'...';
+    checkVR();
+    toast('✓ Video cargado · '+Math.round(vid.duration/60)+'min · Dale play');
+  };
+  vid.onerror = (err) => {
+    console.warn('Video error:', err, vid.error);
+    toast('Error al reproducir · Intenta abrir el video con otra app primero');
+  };
+  e.target.value = ''; // reset so same file can be re-selected
+}
+
+// ── FRAME CAPTURE ─────────────────────────────────────────────
+function doCap(vidEl, arr, badgeId, scanId){
+  arr.length=0; S.lastHash=''; S.capturing=true;
+  document.getElementById(scanId).classList.add('on');
+  const cvs = document.getElementById(vidEl===document.getElementById('vidEl')?'vCanvas':'cCanvas');
+  S.capIv = setInterval(()=>{
+    if(vidEl.videoWidth===0||vidEl.paused) return;
+    cvs.width=Math.min(vidEl.videoWidth,480);
+    cvs.height=Math.round(vidEl.videoHeight*(cvs.width/vidEl.videoWidth));
+    cvs.getContext('2d').drawImage(vidEl,0,0,cvs.width,cvs.height);
+    const d=cvs.toDataURL('image/jpeg',0.55);
+    const h=d.substring(180,250);
+    if(h===S.lastHash)return;
+    S.lastHash=h; arr.push({d,ts:Date.now()});
+    document.getElementById(badgeId).textContent=arr.length+' frames';
+  },700);
+}
+function stopCap(scanId){ clearInterval(S.capIv); S.capturing=false; if(scanId)document.getElementById(scanId).classList.remove('on'); }
+function clearFrames(){ stopCap('scan'); S.frames=[]; document.getElementById('fbadge').textContent='0 frames'; toast('Frames eliminados'); }
+function clearCamFrames(){ stopCap('scanC'); S.camFrames=[]; document.getElementById('camBadge').textContent='0 frames'; toast('Frames eliminados'); }
+
+// ── CAPTURE + EXTRACT FRAMES (shared) ─────────────────────────
+async function captureAndOCR(vidEl, frames, badgeId, scanId, sampleCount){
+  if(!frames.length){
+    toast('⏺ Capturando frames...');
+    doCap(vidEl, frames, badgeId, scanId);
+    vidEl.play().catch(()=>{});
+    await delay(5000);
+    stopCap(scanId);
+    if(!frames.length){ toast('Sin frames · Dale play al video primero'); return null; }
+  }
+  const step = Math.max(1,Math.floor(frames.length/sampleCount));
+  const sample = [];
+  for(let i=0;i<frames.length;i+=step) sample.push(frames[i]);
+  let txt = '';
+  for(let i=0;i<sample.length;i++){
+    setPf('pvf','pvl', 5+i*10, 'FRAME '+(i+1)+'/'+sample.length+'...');
+    try{
+      const b64 = sample[i].d.split(',')[1];
+      const r = await api([{role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
+        {type:'text',text:'Extrae todo el texto visible en la imagen. Solo el texto, sin comentarios ni explicaciones.'}
+      ]}],400);
+      txt += r+'\n~~\n';
+    }catch{ txt += '[frame '+i+' offline]\n'; }
+  }
+  return txt;
+}
+
+// ── ANALYZE VIDEO ─────────────────────────────────────────────
+async function runVideoFull(){
+  const cmd = document.getElementById('vidCmd').value.trim();
+  const vid = document.getElementById('vidEl');
+  if(!vid.src&&!vid.srcObject){ toast('Carga un video primero'); return; }
+  document.getElementById('vst').textContent='ANALIZANDO...';
+  setAg('vast','vag',1,'run'); setPf('pvf','pvl',5,'CAPTURANDO FRAMES...');
+  const txt = await captureAndOCR(vid, S.frames, 'fbadge', 'scan', 8);
+  if(!txt) return;
+  setAg('vast','vag',1,'done');
+  await pipeline(txt, cmd, 'vast','vag','pvf','pvl','vsp');
+  document.getElementById('vst').textContent='COMPLETO';
+}
+
+// ── TRANSLATE VIDEO ───────────────────────────────────────────
+async function runVideoTranslate(mode){
+  const vid = document.getElementById('vidEl');
+  if(!vid.src&&!vid.srcObject){ toast('Carga un video primero'); return; }
+  document.getElementById('vst').textContent='EXTRAYENDO TEXTO...';
+  setAg('vast','vag',1,'run'); setPf('pvf','pvl',5,'LEYENDO FRAMES...');
+  const txt = await captureAndOCR(vid, S.frames, 'fbadge', 'scan', 10);
+  if(!txt) return;
+  setAg('vast','vag',1,'done');
+  // Send extracted text to translator
+  const from = document.getElementById('fromLang').value;
+  const to = document.getElementById('toLang').value;
+  const tone = document.getElementById('voiceTone')?.value || 'natural';
+  setPf('pvf','pvl',70,'A5 TRADUCIENDO...');
+  document.getElementById('tr5st').textContent='TRADUCIENDO...';
+  document.getElementById('tr5st').className='agst run';
+  try{
+    const result = await api([{role:'user',content:
+      `${AG[5].p}\nTONO: ${tone}\nDE: ${LN[from]||from} A: ${LN[to]||to}\n`+
+      `Traduce TODO el siguiente texto extraído de un video. Con naturalidad, eliminando frases repetidas o incompletas de frames duplicados.\n`+
+      `TEXTO: ${txt.substring(0,4000)}`
+    }],1000);
+    setPf('pvf','pvl',100,'✓ TRADUCCIÓN COMPLETA');
+    document.getElementById('vst').textContent='COMPLETO';
+    document.getElementById('tr5st').textContent='✓ TRADUCIDO';
+    document.getElementById('tr5st').className='agst ok';
+    const sp5='Traducción de video completada.';
+    document.getElementById('tr5sp').textContent=sp5;
+    S.lastSp[5]=sp5;
+    // Show result and speak if requested
+    if(mode==='voz'){
+      speak(result,5);
+      toast('🔊 Traduciendo con voz...');
+    }else{
+      toast('✓ Traducción lista · Ve a RESULTADOS');
+    }
+    // Navigate to translator screen to show result
+    document.getElementById('trSrc').value=txt.substring(0,500)+'...';
+    document.getElementById('trResult').textContent=result;
+    // Save
+    S.tr.unshift({id:Date.now(),from:LN[from]||from,to:LN[to]||to,original:'[video]',result,ts:new Date().toLocaleString('es'),type:'tr'});
+    localStorage.setItem('f1t',JSON.stringify(S.tr.slice(0,50)));
+    syncUI();
+    nav('s-translate');
+  }catch{
+    setPf('pvf','pvl',0,'ERROR · Sin conexión WiFi');
+    document.getElementById('vst').textContent='ERROR';
+    toast('Sin WiFi · Necesitas conexión para traducir');
+  }
+}
+
+// ── SCREEN SHARE ──────────────────────────────────────────────
+async function doScreenShare(){
+  if(!navigator.mediaDevices?.getDisplayMedia){toast('Requiere Chrome + HTTPS');return;}
+  try{
+    const stream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
+    const vid=document.getElementById('vidEl');
+    document.getElementById('novid').style.display='none';
+    vid.style.display='block'; vid.srcObject=stream; vid.controls=false; vid.play();
+    document.getElementById('vst').textContent='PANTALLA ACTIVA';
+    checkVR();
+    stream.getVideoTracks()[0].onended=()=>document.getElementById('vst').textContent='LISTO';
+    toast('🖥️ Pantalla · Presiona ANALIZAR o TRADUCIR');
+  }catch{ toast('Cancelado'); }
+}
+
+// ── CAMERA ────────────────────────────────────────────────────
+async function toggleCam(){
+  if(S.camStream){
+    stopCap('scanC'); S.camStream.getTracks().forEach(t=>t.stop()); S.camStream=null;
+    document.getElementById('camEl').style.display='none';
+    document.getElementById('nocam').style.display='flex';
+    document.getElementById('btnCam').textContent='📷 INICIAR';
+    document.getElementById('btnCam').classList.remove('act');
+    document.getElementById('liveBadge').style.display='none';
+    document.getElementById('camSt').textContent='INACTIVA';
+    return;
+  }
+  if(location.protocol!=='https:'){ toast('⚠ Cámara requiere HTTPS'); nav('s-guide'); return; }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:S.camFacing},audio:false});
+    S.camStream=stream;
+    const ce=document.getElementById('camEl');
+    document.getElementById('nocam').style.display='none'; ce.style.display='block'; ce.srcObject=stream; await ce.play();
+    document.getElementById('btnCam').textContent='⏹ DETENER'; document.getElementById('btnCam').classList.add('act');
+    document.getElementById('liveBadge').style.display='block'; document.getElementById('camSt').textContent='EN VIVO';
+    toast('📷 Activa · Apunta a pantalla o texto');
+  }catch(e){ toast('Error: '+e.message); }
+}
+function flipCam(){ S.camFacing=S.camFacing==='environment'?'user':'environment'; if(S.camStream){ stopCap('scanC'); S.camStream.getTracks().forEach(t=>t.stop()); S.camStream=null; toggleCam(); } }
+function stopCam(){ if(S.camStream){ S.camStream.getTracks().forEach(t=>t.stop()); S.camStream=null; } }
+async function runCamExtract(){
+  const cmd=document.getElementById('camCmd').value.trim();
+  if(!S.camStream){ toast('Inicia la cámara primero'); return; }
+  setAg('cast','cag',1,'run'); setPf('pcf','pcl',5,'CAPTURANDO...');
+  const txt=await captureAndOCR(document.getElementById('camEl'),S.camFrames,'camBadge','scanC',6);
+  if(!txt)return;
+  setAg('cast','cag',1,'done');
+  await pipeline(txt,cmd,'cast','cag','pcf','pcl','csp');
+}
+
+// ── TRANSLATOR ────────────────────────────────────────────────
+async function runTranslate(){
+  const src=document.getElementById('trSrc').value.trim();
+  if(!src){ toast('Escribe o pega texto'); return; }
+  const from=document.getElementById('fromLang').value;
+  const to=document.getElementById('toLang').value;
+  const tone=document.getElementById('voiceTone').value;
+  document.getElementById('tr5st').textContent='TRADUCIENDO...'; document.getElementById('tr5st').className='agst run';
+  document.getElementById('trResult').textContent='Traduciendo...';
+  try{
+    const result=await api([{role:'user',content:`${AG[5].p}\nTONO: ${tone}\nDE: ${LN[from]||from} A: ${LN[to]||to}\nTraduce con fidelidad y naturalidad. Solo la traducción.\nTEXTO: ${src}`}],800);
+    document.getElementById('trResult').textContent=result;
+    document.getElementById('tr5st').textContent='✓ TRADUCIDO'; document.getElementById('tr5st').className='agst ok';
+    const sp5='Traducción completada con precisión y elegancia.';
+    document.getElementById('tr5sp').textContent=sp5; S.lastSp[5]=sp5;
+    speak(result,5);
+    S.tr.unshift({id:Date.now(),from:LN[from]||from,to:LN[to]||to,original:src,result,ts:new Date().toLocaleString('es'),type:'tr'});
+    localStorage.setItem('f1t',JSON.stringify(S.tr.slice(0,50))); syncUI();
+  }catch{ document.getElementById('trResult').textContent='[Sin WiFi]'; document.getElementById('tr5st').textContent='OFFLINE'; document.getElementById('tr5st').className='agst'; }
+}
+function speakTr(){ const t=document.getElementById('trResult').textContent; if(t&&!t.startsWith('La traducción'))speak(t,5); }
+function saveTr(){ const r=document.getElementById('trResult').textContent; if(!r||r.startsWith('La traducción'))return; syncUI(); toast('✓ Guardado'); }
+function toggleLive(){
+  if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('Requiere HTTPS');return;}
+  if(S.liveActive){ S.liveRec&&S.liveRec.stop(); S.liveActive=false; document.getElementById('btnLive').textContent='🎙 LIVE TRADUCIR'; document.getElementById('btnLive').classList.remove('act'); return; }
+  const from=document.getElementById('fromLang').value;
+  const lm={en:'en-US',pt:'pt-BR',fr:'fr-FR',de:'de-DE',it:'it-IT',zh:'zh-CN',ja:'ja-JP',ko:'ko-KR',ar:'ar-SA',ru:'ru-RU',auto:'en-US',es:'es-ES'};
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  S.liveRec=new SR(); S.liveRec.lang=lm[from]||'en-US'; S.liveRec.continuous=true; S.liveRec.interimResults=false;
+  S.liveRec.onresult=async e=>{ const h=e.results[e.results.length-1][0].transcript; document.getElementById('trSrc').value=h; await runTranslate(); };
+  S.liveRec.onerror=()=>{ S.liveActive=false; document.getElementById('btnLive').textContent='🎙 LIVE TRADUCIR'; document.getElementById('btnLive').classList.remove('act'); };
+  S.liveRec.start(); S.liveActive=true; document.getElementById('btnLive').textContent='⏹ DETENER'; document.getElementById('btnLive').classList.add('act');
+  toast('🎙 Escuchando en '+(LN[from]||'auto')+'...');
+}
+
+// ── FILES ─────────────────────────────────────────────────────
+function addFiles(e){ Array.from(e.target.files).forEach(f=>{ if(!S.files.find(u=>u.name===f.name))S.files.push(f); }); renderFiles(); checkUR(); e.target.value=''; }
+function removeFile(i){ S.files.splice(i,1); renderFiles(); checkUR(); }
+function renderFiles(){ document.getElementById('flist').innerHTML=S.files.map((f,i)=>`<div class="fitem"><div class="finf"><div class="fn">${f.name}</div><div class="fs">${(f.size/1024).toFixed(0)} KB</div></div><button class="fdel" onclick="removeFile(${i})">×</button></div>`).join(''); }
+async function runUpload(){ const cmd=document.getElementById('upCmd').value.trim(); document.getElementById('uagents').style.display='block'; let txt=''; for(const f of S.files)txt+='\n=== '+f.name+' ===\n'+await readTxt(f)+'\n'; await pipeline(txt,cmd,'uast','uag','puf','pul','usp'); }
+function readTxt(f){ return new Promise(r=>{ const fr=new FileReader(); fr.onload=e=>r(e.target.result); fr.onerror=()=>r('[error]'); fr.readAsText(f); }); }
+
+// ── TEXT ──────────────────────────────────────────────────────
+async function runText(){ document.getElementById('tagents').style.display='block'; await pipeline(document.getElementById('pasteArea').value.trim(),document.getElementById('txtCmd').value.trim(),'tast','tag','ptf','ptl','tsp'); }
+
+// ── 4-AGENT PIPELINE ─────────────────────────────────────────
+async function pipeline(src,cmd,stp,agp,fid,lid,spfx){
+  const s=src.substring(0,5000); const m=n=>S.mem[n]?'\nMEMORIA: '+S.mem[n]:'';
+  setAg(stp,agp,1,'run'); setPf(fid,lid,12,'A1 CIRUJANO...');
+  const r1=await api([{role:'user',content:AG[1].p+m(1)+'\nExtrae SOLO lo solicitado. Sin comentarios.\nFUENTE: '+s+'\nINSTRUCCIÓN: '+cmd+'\nEntrega contenido extraído numerado.'}]);
+  const s1='Corte limpio. Extracción completada.'; setSp(spfx,1,s1); S.lastSp[1]=s1; speak(s1,1); setAg(stp,agp,1,'done');
+  setAg(stp,agp,2,'run'); setPf(fid,lid,36,'A2 AUDITOR...');
+  const r2=await api([{role:'user',content:AG[2].p+m(2)+'\nA1:---'+r1+'---\nINSTRUCCIÓN:"'+cmd+'"\nFUENTE:'+s.substring(0,2000)+'\nVerifica. Corrige. Solo contenido.'}]);
+  const s2='Auditoría completa. Sin errores.'; setSp(spfx,2,s2); S.lastSp[2]=s2; speak(s2,2); setAg(stp,agp,2,'done');
+  setAg(stp,agp,3,'run'); setPf(fid,lid,62,'A3 ARQUITECTO...');
+  const r3=await api([{role:'user',content:AG[3].p+m(3)+'\nContenido:---'+r2+'---\nINSTRUCCIÓN:"'+cmd+'"\nOrganiza. 1 mejora máx.'}]);
+  const s3='Estructura optimizada.'; setSp(spfx,3,s3); S.lastSp[3]=s3; speak(s3,3); setAg(stp,agp,3,'done');
+  setAg(stp,agp,4,'run'); setPf(fid,lid,84,'A4 DIOS...');
+  const r4=await api([{role:'user',content:AG[4].p+m(4)+'\nInput:---'+r3+'---\nINSTRUCCIÓN:"'+cmd+'"\nPasada final. Solo resultado.'}]);
+  const s4='Ejecutado.'; setSp(spfx,4,s4); S.lastSp[4]=s4; speak(s4,4); setAg(stp,agp,4,'done');
+  setPf(fid,lid,100,'✓ COMPLETADO');
+  S.ext.unshift({id:Date.now(),cmd,result:r4,ts:new Date().toLocaleString('es')});
+  localStorage.setItem('f1e',JSON.stringify(S.ext.slice(0,80))); syncUI(); toast('✓ Guardado · RESULTADOS');
+}
+
+// ── API ───────────────────────────────────────────────────────
+async function api(messages,maxTok=1000){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTok,messages})});
+  if(!r.ok) throw new Error(r.status);
+  const d=await r.json(); return d.content?.[0]?.text||'';
+}
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ── AGENT UI ─────────────────────────────────────────────────
+function setAg(stp,agp,n,state){ const st=document.getElementById(stp+n),ag=document.getElementById(agp+n); if(!st||!ag)return; st.className='agst'; ag.classList.remove('run','done'); if(state==='run'){st.classList.add('run');st.textContent='EJECUTANDO...';ag.classList.add('run');}else if(state==='done'){st.classList.add('ok');st.textContent='✓ OK';ag.classList.add('done');}else st.textContent='STANDBY'; }
+function setSp(pfx,n,msg){ const el=document.getElementById(pfx+n); if(el)el.textContent=msg; }
+function setPf(fid,lid,pct,lbl){ const f=document.getElementById(fid),l=document.getElementById(lid); if(f)f.style.width=pct+'%'; if(l)l.textContent=lbl; }
+
+// ── MODAL ─────────────────────────────────────────────────────
+function openModal(n){ S.modal=n; const ag=AG[n]; const mn=document.getElementById('mnum'); mn.textContent='A'+n; mn.className='anum '+ag.cls; mn.style.cssText='width:24px;height:24px;font-size:9px'; document.getElementById('mname').textContent=ag.name; document.getElementById('mname').style.color=ag.color; document.getElementById('mpct').textContent=ag.pct+' eficiencia'; document.getElementById('memTxt').value=S.mem[n]||''; renderChat(n); document.getElementById('modal').classList.remove('off'); }
+function closeModal(){ document.getElementById('modal').classList.add('off'); S.modal=null; }
+function renderChat(n){ const log=document.getElementById('chatlog'); const msgs=S.chats[n]||[]; const g={1:'Cirujano listo.',2:'Auditor activo.',3:'Arquitecto en línea.',4:'...',5:'Intérprete activo. ¿Qué traduzco?'}; if(!msgs.length){log.innerHTML='<div class="bmsg ag">'+g[n]+'</div>';return;} log.innerHTML=msgs.map(m=>'<div class="bmsg '+(m.r==='u'?'usr':'ag')+'">'+m.c+'</div>').join(''); setTimeout(()=>log.scrollTop=log.scrollHeight,50); }
+async function sendAgent(){ const n=S.modal,inp=document.getElementById('agIn'),msg=inp.value.trim(); if(!msg)return; inp.value=''; S.chats[n].push({r:'u',c:msg}); renderChat(n); try{ const mem=S.mem[n]?'\nMEMORIA: '+S.mem[n]:''; const hist=S.chats[n].map(m=>({role:m.r==='u'?'user':'assistant',content:m.c})); const reply=await api([{role:'user',content:AG[n].p+mem+'\nResponde en español, en personaje. Máximo 2 oraciones.'},...hist],250); S.chats[n].push({r:'a',c:reply}); localStorage.setItem('f1c',JSON.stringify(S.chats)); renderChat(n); speak(reply,n); }catch{ toast('Sin WiFi · Necesitas conexión'); } }
+function saveMem(){ const n=S.modal; S.mem[n]=document.getElementById('memTxt').value.trim(); localStorage.setItem('f1m',JSON.stringify(S.mem)); toast('✓ Memoria A'+n+' guardada'); closeModal(); }
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+document.getElementById('agIn').addEventListener('keydown',e=>{if(e.key==='Enter')sendAgent();});
+
+// ── OUTPUT ────────────────────────────────────────────────────
+function switchOut(mode,btn){ S.outMode=mode; document.querySelectorAll('.otab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); renderOut(mode); }
+function renderOut(mode){
+  const a=document.getElementById('outArea');
+  const all=[...S.ext,...S.tr].sort((x,y)=>y.id-x.id);
+  if(!all.length){a.textContent='Las extracciones y traducciones aparecerán aquí...';a.classList.add('empty');return;}
+  a.classList.remove('empty');
+  if(mode==='last'){ const e=all[0]; a.textContent=e.type==='tr'?`[${e.ts}]\n${e.from} → ${e.to}\n\n${e.result}`:`[${e.ts}]\nCMD: ${e.cmd}\n\n${e.result}`; }
+  else if(mode==='tr'){ if(!S.tr.length){a.textContent='Sin traducciones aún...';return;} a.textContent=S.tr.map((e,i)=>`━━━ T${i+1} [${e.ts}] ━━━\n${e.from} → ${e.to}\n\n${e.result}`).join('\n\n'); }
+  else{ a.textContent=all.map((e,i)=>e.type==='tr'?`━━━ TR [${e.ts}] ━━━\n${e.from} → ${e.to}\n\n${e.result}`:`━━━ ${i+1} [${e.ts}] ━━━\nCMD: ${e.cmd}\n\n${e.result}`).join('\n\n'); }
+}
+function copyOut(){ navigator.clipboard.writeText(document.getElementById('outArea').textContent).then(()=>toast('✓ Copiado')); }
+function dlTxt(){ const b=new Blob([document.getElementById('outArea').textContent],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='FRANK1_'+Date.now()+'.txt'; a.click(); }
+function dlWord(){
+  const all=[...S.ext,...S.tr].sort((x,y)=>y.id-x.id);
+  const rows=all.map((e,i)=>e.type==='tr'
+    ?`<h3 style="color:#FF6B35;margin-top:22px">Traducción — ${e.ts}</h3><p><strong>${e.from} → ${e.to}</strong></p><pre style="white-space:pre-wrap;font-size:12px;line-height:1.7;font-family:Courier;border-left:3px solid #FF6B35;padding-left:11px;margin-top:7px">${e.result.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><hr>`
+    :`<h3 style="color:#C9A84C;margin-top:22px">Extracción ${i+1} — ${e.ts}</h3><p><strong>CMD:</strong> ${e.cmd}</p><pre style="white-space:pre-wrap;font-size:12px;line-height:1.7;font-family:Courier;border-left:3px solid #C9A84C;padding-left:11px;margin-top:7px">${e.result.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><hr>`
+  ).join('');
+  const html=`<html><head><meta charset="UTF-8"><style>body{font-family:Arial;max-width:800px;margin:40px auto;color:#222;line-height:1.6}h1{color:#C9A84C;letter-spacing:3px}hr{border:none;border-top:1px solid #eee;margin:16px 0}</style></head><body><h1>APP FRANK1</h1><p style="color:#888;font-size:12px">Generado: ${new Date().toLocaleString('es')}</p><hr>${rows}</body></html>`;
+  const b=new Blob(['\ufeff'+html],{type:'application/msword'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='FRANK1_'+Date.now()+'.doc'; a.click(); toast('✓ Descargando Word...');
+}
+function dlPdf(){
+  const win=window.open('','_blank'); if(!win){toast('Permite ventanas emergentes');return;}
+  win.document.write(`<html><head><title>FRANK1</title><style>body{font-family:Arial;max-width:800px;margin:40px auto;font-size:12px;line-height:1.7}h1{color:#C9A84C}pre{white-space:pre-wrap;border-left:3px solid #C9A84C;padding-left:12px;font-size:11px}</style></head><body><h1>APP FRANK1</h1><pre>${document.getElementById('outArea').textContent.replace(/</g,'&lt;')}</pre><script>setTimeout(()=>window.print(),400)<\/script></body></html>`);
+  win.document.close(); toast('✓ Listo para guardar como PDF');
+}
+function clearOut(){ if(!confirm('¿Eliminar todo?'))return; S.ext=[]; S.tr=[]; localStorage.removeItem('f1e'); localStorage.removeItem('f1t'); syncUI(); renderOut('all'); toast('Eliminado'); }
+
+syncUI();
+</script>
+</body>
+</html>
